@@ -1,5 +1,4 @@
 import tkinter as tk
-import tkinter.messagebox as tkmb
 
 def start_project():
     class Window2(tk.Tk):
@@ -26,8 +25,10 @@ def main():
             self.title("VCS - GIT")
             label_1 = tk.Label(self, text="Welcome to GIT!", font=("Helvetica", 50, 'bold', 'italic'), fg="#1b095c", bg="#f2e15c")
             label_1.pack(fill=tk.BOTH, expand=1, padx=25, pady=15)
-            start_project_button = tk.Button(text ="Go to your Project", command = start_project, font=("Courier", 25, "bold"), fg="#1b095c", activebackground="grey", activeforeground="blue")
-            start_project_button.pack(expand=1)
+            load_repository_button = tk.Button(text ="Load your Repository", font=("Courier", 25, "bold"), fg="#1b095c", activebackground="grey", activeforeground="blue")
+            load_repository_button.pack(side = tk.LEFT, expand=1, pady = 100)
+            create_repository_button = tk.Button(text ="Create new Repository", font=("Courier", 25, "bold"), fg="#1b095c", activebackground="grey", activeforeground="blue")
+            create_repository_button.pack(side = tk.RIGHT, expand=1, pady = 100)
     window_opening = Window()
     window_opening.minsize(1250, 500)
     window_opening.configure(bg='#f2e15c')
