@@ -2,87 +2,76 @@ import os
 import shutil
 import log
 
-if not os.path.exists('previousver/.'):
-    os.makedirs('previousver/.')
+def pushfunction(a, folder):
+    p = os.path.basename(os.path.normpath(folder))
+    print(p)
 
-if not os.path.exists('currentver/.'):
-    os.makedirs('currentver/.')
+    print(os.getcwd())
 
-if not os.path.exists('./vercontrol/logver.txt'):
-    f = open("./vercontrol/logver.txt", "w")
-    f.write("0")
-    f.close()
+    logdir = os.path.join(os.path.abspath('vercontrol'), p)
+    
+    print(logdir)
 
-def main():
-    x = "inic"
-    while x!="0":
-        x = input()
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
 
-        if x == "list":                                 #current directory i njegovi fajlovi, za debug
-            print(os.getcwd())
-            files = [f for f in os.listdir('.') if os.path.isfile(f)]
-            for f in files:
-                print(f)
+    os.chdir(logdir)
+    log.log_it(a,logdir)                        #ubelezavamo commit, i povecavamo verzijju
 
-        if x == "log":
-            os.chdir('./vercontrol')
-            f = open('logver.txt', 'r')
-            file_contents = f.read()
-            print ("Prikazuje se broj trenutne verzije i sta je uradjeno u proslim")
-            print (file_contents)
-            f.close()
-            path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
-            os.chdir(path_parent)                       #vracanje jedan dir iznad
-                
-        if x == "push":
-            print("Unesite sta ste uradili u ovoj verziji") #saljemo poruku commita
-            a = input()
-            os.chdir('./vercontrol')
-            log.log_it(a)                               #ubelezavamo commit, i povecavamo verzijju
+    path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
+    os.chdir(path_parent)                       #vracanje jedan dir iznad
+    path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
+    os.chdir(path_parent)                       #vracanje jedan dir iznad
 
-            path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
-            os.chdir(path_parent)                       #vracanje jedan dir iznad
 
-            dirpath = os.path.join('./previousver', log.vernumbstring)
-            if not os.path.exists(dirpath):
-                os.makedirs(dirpath)
-            src = './currentver/'
-            dest = dirpath                              #iz currentver u previousver
+    dirpath = os.path.join('./previousver', p)
+    dirpath = os.path.join(dirpath, log.vernumbstring)
+    if not os.path.exists(dirpath):
+        os.makedirs(dirpath)
+    src = folder
+    dest = dirpath                              #iz currentver u previousver
 
-            files = os.listdir(src)                     #kopiramo
-            for f in files:
-                shutil.copy(src + f, dest)
+    files = os.listdir(src)                     #kopiramo
+    for f in files:
+        shutil.copy(src + f, dest)
 
-        if x == "selectversion":
-            print("Unesite verziju na koju se zelite prebaciti")
-            b = input()
-            b_save = b
+def selverfunction(b, folder):
+    b_save = b
+    b = b + "/"                                 #polaz - folder izabrane verzije
 
-            dirpath = os.path.join('./previousver', b)
-            if not os.path.exists(dirpath):
-                print("Ne mozete se prebaciti na nepostojecu verziju, odnosno onu u kojoj je vracena prethodna verzija!")
-                continue
+    p = os.path.basename(os.path.normpath(folder))
+    print(p) 
 
-            b = b + "/"                                 #polaz - folder izabrane verzije
-            src = dirpath                               #destinacija - currentver folder
-            dest = './currentver/'
+    dirpath = os.path.join('./previousver', p)
+    dirpath = os.path.join(dirpath, b)
+    if not os.path.exists(dirpath):
+        return 0
 
-            for f in os.listdir(dest):                  #brisemo sve iz destinacije pre kopiranja
-                os.remove(os.path.join(dest, f))
+    src = dirpath                               #destinacija - currentver folder
+    dest = folder
 
-            files = os.listdir(src)                     #kopiramo
-            for f in files:
-                shutil.copy(src + f, dest)
-            
-            a = "Reverted to " + b_save + ". version"
-            os.chdir('./vercontrol')
-            log.log_it(a)
+    for f in os.listdir(dest):                  #brisemo sve iz destinacije pre kopiranja
+        os.remove(os.path.join(dest, f))
 
-            path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
-            os.chdir(path_parent)                       #vracanje jedan dir iznad
-            
+    files = os.listdir(src)                     #kopiramo
+    for f in files:
+        shutil.copy(src + f, dest)
+    
+    os.chdir('./vercontrol')
 
-    print("kraj programa")
+    logdir = os.path.join('./', p)
 
-if __name__ == "__main__":
-    main()
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+
+    a = "Reverted to " + b_save + ". version"
+
+    os.chdir(logdir)
+    log.log_it(a, logdir)
+
+    path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
+    os.chdir(path_parent)                       #vracanje jedan dir iznad
+    path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
+    os.chdir(path_parent)                       #vracanje jedan dir iznad
+
+    return 1

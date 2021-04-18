@@ -1,5 +1,17 @@
 from datetime import datetime
-def log_it (a):
+import os
+
+def log_it (a, logdir):
+    path_parent = os.path.dirname(os.getcwd())  #vracanje jedan dir iznad
+    os.chdir(path_parent)                       #vracanje jedan dir iznad
+
+    os.chdir(logdir)
+
+    if not os.path.exists('./logver.txt'):
+        f = open("./logver.txt", "w")
+        f.write("0")
+        f.close()
+
     with open('logver.txt', "r+") as f:
         lines = f.readlines()
         global vernumbstring
